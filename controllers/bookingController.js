@@ -37,6 +37,7 @@ const addBooking = asyncHandler(async (req, res) => {
     price,
     bus,
     cancelled,
+    paid,
   } = req.body;
 
   const booking = await Booking.create({
@@ -48,6 +49,7 @@ const addBooking = asyncHandler(async (req, res) => {
     price,
     bus,
     cancelled,
+    paid,
   });
   if (booking) {
     res.status(200).json(booking);
@@ -69,6 +71,7 @@ const updateBooking = asyncHandler(async (req, res) => {
     booking.price = req.body.price || booking.price;
     booking.bus = req.body.bus || booking.bus;
     booking.cancelled = req.body.cancelled || booking.cancelled;
+    booking.paid = req.body.paid || booking.paid;
 
     const updatedBooking = await booking.save();
     if (updatedBooking) {
@@ -94,4 +97,35 @@ const deleteBooking = asyncHandler(async (req, res) => {
   }
 });
 
-export { getBookings, addBooking, updateBooking, deleteBooking, getBooking };
+// update booking to paid
+const updateBookingTopaid = asyncHandler(async (req, res) => {
+  const booking = await Booking.findById(req.params.id);
+  if (booking) {
+    booking.paid = true;
+    const updatedBooking = await booking.save();
+    if (updatedBooking) {
+      res.status(200).json(updatedBooking);
+    } else {
+      throw new Error("Booking not updated");
+    }
+  } else {
+    throw new Error("Booking not found");
+  }
+});
+
+const cancelBooking = asyncHandler(async (req, res) => {
+  const booking = await Booking.findById(req.params.id);
+  if (booking) {
+    booking.cancelled = true;
+    const updatedBooking = await booking.save();
+    if (updatedBooking) {
+      res.status(200).json(updatedBooking);
+    } else {
+      throw new Error("Booking not updated");
+    }
+  } else {
+    throw new Error("Booking not found");
+  }
+});
+
+export { getBookings, addBooking, updateBooking, deleteBooking, getBooking, updateBookingTopaid, cancelBooking };
