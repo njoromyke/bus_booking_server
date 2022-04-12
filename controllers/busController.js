@@ -1,5 +1,5 @@
 import Bus from "../models/busModel.js";
-import aycnHandler from "express-async-handler";
+import asyncHandler from "express-async-handler";
 
 const getBuses = asyncHandler(async (req, res) => {
   const buses = await Bus.find({});
