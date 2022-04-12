@@ -6,6 +6,7 @@ import connectDB from "./config/db.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import userRoutes from "./routes/userRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
+import busRoutes from "./routes/busRoutes.js";
 
 const app = express();
 app.use(express.json());
@@ -16,6 +17,8 @@ app.use(cors());
 // endpoints
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/bookings", bookingRoutes);
+app.use("/api/v1/buses", busRoutes);
+
 
 app.get("/", (req, res) => {
   res.send(

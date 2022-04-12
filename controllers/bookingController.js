@@ -50,6 +50,7 @@ const addBooking = asyncHandler(async (req, res) => {
     bus,
     cancelled,
     paid,
+    user: req.user._id,
   });
   if (booking) {
     res.status(200).json(booking);
@@ -128,4 +129,12 @@ const cancelBooking = asyncHandler(async (req, res) => {
   }
 });
 
-export { getBookings, addBooking, updateBooking, deleteBooking, getBooking, updateBookingTopaid, cancelBooking };
+export {
+  getBookings,
+  addBooking,
+  updateBooking,
+  deleteBooking,
+  getBooking,
+  updateBookingTopaid,
+  cancelBooking,
+};

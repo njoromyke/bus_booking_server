@@ -1,36 +1,22 @@
 import mongoose from "mongoose";
 
-const busSchema = mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-    seats: [
-      {
-        seatNumber: {
-          type: Number,
-          required: true,
-        },
-        available: {
-          type: Boolean,
-          required: true,
-        },
-      },
-    ],
-    numberPlate: {
-      type: String,
-      required: true,
-    },
-    booked: {
-      type: Boolean,
-      default: false,
-    },
+const paymentSchema = mongoose.Schema({
+  amount: {
+    type: Number,
+    required: true,
   },
-  {
-    timestamps: true,
-  }
-);
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  booking: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Booking",
+    required: true,
+  },
+});
 
-const Bus = mongoose.model("Bus", busSchema);
-export default Bus;
+const Payment = mongoose.model("Payment", paymentSchema);
+
+export default Payment;
