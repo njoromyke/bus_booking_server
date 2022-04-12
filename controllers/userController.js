@@ -1,5 +1,5 @@
 import generateToken from "../utils/generateToken.js";
-import User from "../models/User.js";
+import User from "../models/usersModel.js";
 import AsyncHandler from "express-async-handler";
 
 //@desc register user

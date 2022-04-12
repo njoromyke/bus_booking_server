@@ -4,7 +4,7 @@ import path from "path";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
-
+import userRoutes from "./routes/userRoutes.js";
 
 const app = express();
 app.use(express.json());
@@ -12,7 +12,8 @@ dotenv.config();
 connectDB();
 app.use(cors());
 
-
+// endpoints
+app.use("/api/v1/users", userRoutes);
 
 app.get("/", (req, res) => {
   res.send(
