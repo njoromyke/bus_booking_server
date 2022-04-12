@@ -18,13 +18,31 @@ const bookingSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    seatNumber: {
-      type: Number,
-      required: true,
-    },
+    seatBooked: [
+      {
+        seatNo: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
     price: {
       type: Number,
       required: true,
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    bus: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Bus",
+      required: true,
+    },
+    cancelled: {
+      type: Boolean,
+      default: false,
     },
   },
   {
