@@ -22,10 +22,7 @@ const busSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    booked: {
-      type: Boolean,
-      default: false,
-    },
+    
   },
   {
     timestamps: true,
