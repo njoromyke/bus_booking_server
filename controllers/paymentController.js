@@ -2,23 +2,13 @@ import Payment from "../models/paymentModel.js";
 import asyncHandler from "express-async-handler";
 import { Mpesa } from "mpesa-api";
 
-const credentials = {
-  clientKey: process.env.ConsumerKey,
-  clientSecret: process.env.ConsumerSecret,
-  initiatorPassword: process.env.InitiatorPassword,
-  securityCredential: process.env.SecurityCredential,
-};
-const environment = "sandbox";
-
-const mpesa = new Mpesa(credentials, environment);
-
 // Get all payments
-export const getPayments = asyncHandler(async (req, res) => {
+const getPayments = asyncHandler(async (req, res) => {
   const payments = await Payment.find();
   res.status(200).json(payments);
 });
 // Get a payment
-export const getPayment = asyncHandler(async (req, res) => {
+const getPayment = asyncHandler(async (req, res) => {
   const payment = await Payment.findById(req.params.id);
   if (!payment) {
     throw new Error("payment not found");
@@ -27,37 +17,64 @@ export const getPayment = asyncHandler(async (req, res) => {
   res.status(200).json(payment);
 });
 // Create a payment
-export const createPayment = asyncHandler(async (req, res) => {
-  //   const { amount, booking } = req.body;
-  const payment = await Payment.create(req.body);
-  mpesa
-    .lipaNaMpesaOnline({
+const createPayment = asyncHandler(async (req, res) => {
+  const { amount, booking } = req.body;
+
+  const credentials = {
+    clientKey: process.env.CONSUMER_KEY,
+    clientSecret: process.env.CONSUMER_SECRET,
+    initiatorPassword: process.env.INITIATOR_PASSWORD,
+    securityCredential: process.env.SECURITY_CREDENTIALS,
+    certificatePath: null,
+  };
+  const environment = "sandbox";
+
+  const mpesa = new Mpesa(credentials, environment);
+  try {
+    const response = await mpesa.lipaNaMpesaOnline({
       BusinessShortCode: 174379,
       Amount: 1 /* 1000 is an example amount */,
-      PartyA: "600982",
-      PhoneNumber: "+254729842998",
-      CallBackURL: "https://1ae3-105-160-114-221.ngrok.io/payment/callback",
-      AccountReference: "Bus Ticket Booking",
-      passKey:
-        "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919",
-    })
-    .then((response) => {
-      //Do something with the response
-      //eg
-      console.log(response);
-    })
-    .catch((error) => {
-      //Do something with the error;
-      //eg
-      console.error(error);
+      PartyA: 254729842998,
+      PhoneNumber: 254729842998,
+      PartyB: 174379,
+      CallBackURL: "https://4cc0-105-160-4-151.ngrok.io/payments/callback",
+      AccountReference: "bus booking",
+      passKey: process.env.PASS_KEY,
+      TransactionType: "CustomerPayBillOnline",
     });
+    if (response) {
+      const payment = await Payment.create({
+        _id: response.Body.stkCallback.MerchantRequestID,
+        amount,
+        booking,
+        user: req.user._id,
+      });
 
-  res.status(201).json(payment);
+      res.status(200).json(payment);
+    }
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 const callback = asyncHandler(async (req, res) => {
-  const b = req.body;
-  res.status(200).json(b);
+  const b = req.body.Body.stkCallback["ResultDesc"];
+  if (b === "The service request is processed successfully") {
+    const payment = await Payment.findById(
+      req.body.Body.stkCallback["MerchantRequestID"]
+    );
+    payment.paid = true;
+    payment.save();
+    res.status(200).json(payment);
+  }else if(b=== "Request cancelled by user"){
+    const payment = await Payment.findById(
+      req.body.Body.stkCallback["MerchantRequestID"]
+    );
+    payment.cancelled = true;
+    payment.save();
+    res.status(200).json(payment);
+  }
+
 });
 
 export { callback, getPayments, getPayment, createPayment };

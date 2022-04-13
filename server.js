@@ -7,6 +7,7 @@ import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import userRoutes from "./routes/userRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import busRoutes from "./routes/busRoutes.js";
+import paymentRoutes   from "./routes/paymentRoutes.js"
 
 const app = express();
 app.use(express.json());
@@ -15,9 +16,11 @@ connectDB();
 app.use(cors());
 
 // endpoints
-app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/bookings", bookingRoutes);
-app.use("/api/v1/buses", busRoutes);
+app.use("/users", userRoutes);
+app.use("/bookings", bookingRoutes);
+app.use("/buses", busRoutes);
+app.use("/payments", paymentRoutes);
+
 
 
 app.get("/", (req, res) => {

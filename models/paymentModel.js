@@ -16,6 +16,14 @@ const paymentSchema = mongoose.Schema(
       ref: "Booking",
       required: true,
     },
+    paid: {
+      type: Boolean,
+      default: false,
+    },
+    cancelled: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
