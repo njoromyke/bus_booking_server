@@ -18,14 +18,7 @@ const bookingSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    seatBooked: [
-      {
-        seatNo: {
-          type: Number,
-          required: true,
-        },
-      },
-    ],
+    seatBooked: [],
     price: {
       type: Number,
       required: true,

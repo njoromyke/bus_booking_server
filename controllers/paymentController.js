@@ -1,6 +1,7 @@
 import Payment from "../models/paymentModel.js";
 import asyncHandler from "express-async-handler";
 import { Mpesa } from "mpesa-api";
+import { io } from "../server.js";
 
 // Get all payments
 const getPayments = asyncHandler(async (req, res) => {
@@ -66,7 +67,7 @@ const callback = asyncHandler(async (req, res) => {
     payment.paid = true;
     payment.save();
     res.status(200).json(payment);
-  }else if(b=== "Request cancelled by user"){
+  } else if (b === "Request cancelled by user") {
     const payment = await Payment.findById(
       req.body.Body.stkCallback["MerchantRequestID"]
     );
@@ -74,7 +75,7 @@ const callback = asyncHandler(async (req, res) => {
     payment.save();
     res.status(200).json(payment);
   }
-
+  io.emit("payment", req.body.stkCallback["ResultDesc"]);
 });
 
 export { callback, getPayments, getPayment, createPayment };

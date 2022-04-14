@@ -19,6 +19,7 @@
     "mongoose": "^6.2.10",
     "morgan": "^1.10.0",
     "mpesa-api": "^3.0.2",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "socket.io": "^4.4.1"
   }
 }

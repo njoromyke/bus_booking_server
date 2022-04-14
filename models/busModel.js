@@ -14,7 +14,7 @@ const busSchema = mongoose.Schema(
         },
         available: {
           type: Boolean,
-          required: true,
+          default: true,
         },
       },
     ],
@@ -22,7 +22,6 @@ const busSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    
   },
   {
     timestamps: true,

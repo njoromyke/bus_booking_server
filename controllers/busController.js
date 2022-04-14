@@ -6,7 +6,7 @@ const getBuses = asyncHandler(async (req, res) => {
   if (buses) {
     res.status(200).json(buses);
   } else {
-    throw new Error("Bus not found");
+    throw new Error("No buses found");
   }
 });
 
@@ -23,8 +23,10 @@ const getBus = asyncHandler(async (req, res) => {
 // create bus
 const createBus = asyncHandler(async (req, res) => {
   const { name, seats, numberPlate } = req.body;
+
   const b = await Bus.findOne({ numberPlate });
-  if (b) {
+
+  if (!b) {
     const bus = await Bus.create({
       name,
       seats,
@@ -71,4 +73,35 @@ const getAvailableBuses = asyncHandler(async (req, res) => {
   }
 });
 
-export { getBuses, getBus, createBus, updateBus, deleteBus, getAvailableBuses };
+// update bus  seat to booked where seat number = req.body.seatNumber
+const updateBusSeatToBooked = asyncHandler(async (req, res) => {
+  const bus = await Bus.findById(req.params.id);
+  if (bus) {
+    const seat = bus.seats.find(
+      (seat) => seat.seatNumber === req.body.seatNumber
+    );
+    if (seat) {
+      seat.available = false;
+      const updatedBus = await bus.save();
+      if (updatedBus) {
+        res.status(200).json(updatedBus);
+      } else {
+        throw new Error("Bus not updated");
+      }
+    } else {
+      throw new Error("Seat not found");
+    }
+  } else {
+    throw new Error("Bus not found");
+  }
+});
+
+export {
+  getBuses,
+  getBus,
+  createBus,
+  updateBus,
+  deleteBus,
+  getAvailableBuses,
+  updateBusSeatToBooked,
+};
