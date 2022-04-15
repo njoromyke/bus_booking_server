@@ -24,7 +24,7 @@ const getBookings = asyncHandler(async (req, res) => {
 // @route GET /api/bookings/:id
 // @access Private
 const getBooking = asyncHandler(async (req, res) => {
-  const booking = await Booking.findById(req.params.id);
+  const booking = await Booking.findById(req.params.id).populate("bus");
   if (booking) {
     res.status(200).json(booking);
   } else {

@@ -2,6 +2,7 @@ import Payment from "../models/paymentModel.js";
 import asyncHandler from "express-async-handler";
 import { Mpesa } from "mpesa-api";
 import { io } from "../server.js";
+import Booking from "../models/bookingModel.js";
 
 // Get all payments
 const getPayments = asyncHandler(async (req, res) => {
@@ -42,7 +43,7 @@ const createPayment = asyncHandler(async (req, res) => {
       PartyA: 254729842998,
       PhoneNumber: 254729842998,
       PartyB: 174379,
-      CallBackURL: "https://7173-41-81-41-236.ngrok.io/payments/callback",
+      CallBackURL: "https://9e93-41-81-41-236.ngrok.io/payments/callback",
       AccountReference: "bus booking",
       passKey: process.env.PASS_KEY,
       TransactionType: "CustomerPayBillOnline",
@@ -79,9 +80,14 @@ const callback = asyncHandler(async (req, res) => {
 });
 const updatePaymentToPaid = asyncHandler(async (req, res) => {
   const payment = await Payment.findById(req.params.id);
-  if (payment) {
+  const booking = await Booking.findById(payment.booking);
+
+  if (payment && booking) {
     payment.paid = true;
+    booking.paid = true;
+
     await payment.save();
+    await booking.save();
     io.emit("payment", payment);
     res.status(200).json(payment);
   } else {

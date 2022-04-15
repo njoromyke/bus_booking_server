@@ -15,12 +15,12 @@ const router = express.Router();
 
 router.route("/").post(protect, admin, createBus).get(protect, getBuses);
 
+router.route("/reset/:id").put(protect, admin, setAllBusSeatsToAvailable);
 router
   .route("/:id")
   .delete(protect, admin, deleteBus)
   .get(protect, getBus)
   .put(protect, admin, updateBus);
-router.route("/reset").put(protect, admin, setAllBusSeatsToAvailable);
 router.route("/updateseat/:id").put(updateBusSeatToBooked);
 
 export default router;
