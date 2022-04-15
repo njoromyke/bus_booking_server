@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const paymentSchema = mongoose.Schema(
   {
+    _id: String,
     amount: {
       type: Number,
       required: true,

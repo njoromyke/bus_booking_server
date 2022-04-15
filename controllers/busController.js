@@ -45,7 +45,7 @@ const updateBus = asyncHandler(async (req, res) => {
     bus.name = req.body.name || bus.name;
     bus.seats = req.body.seats || bus.seats;
     bus.numberPlate = req.body.numberPlate || bus.numberPlate;
-    bus.save();
+   await bus.save();
     res.json(bus);
   } else {
     throw new Error("Bus not found");
@@ -96,6 +96,23 @@ const updateBusSeatToBooked = asyncHandler(async (req, res) => {
   }
 });
 
+const setAllBusSeatsToAvailable = asyncHandler(async (req, res) => {
+  const bus = await Bus.findById(req.params.id);
+  if (bus) {
+    bus.seats.forEach((seat) => {
+      seat.available = true;
+    });
+    const updatedBus = await bus.save();
+    if (updatedBus) {
+      res.status(200).json(updatedBus);
+    } else {
+      throw new Error("Bus not updated");
+    }
+  } else {
+    throw new Error("Bus not found");
+  }
+});
+
 export {
   getBuses,
   getBus,
@@ -104,4 +121,5 @@ export {
   deleteBus,
   getAvailableBuses,
   updateBusSeatToBooked,
+  setAllBusSeatsToAvailable,
 };

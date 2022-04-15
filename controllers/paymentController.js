@@ -5,12 +5,16 @@ import { io } from "../server.js";
 
 // Get all payments
 const getPayments = asyncHandler(async (req, res) => {
-  const payments = await Payment.find();
+  const payments = await Payment.find({
+    user: req.user.id,
+  });
   res.status(200).json(payments);
 });
 // Get a payment
 const getPayment = asyncHandler(async (req, res) => {
-  const payment = await Payment.findById(req.params.id);
+  const payment = await Payment.findById(req.params.id)
+    .populate("user")
+    .populate("booking");
   if (!payment) {
     throw new Error("payment not found");
   }
@@ -19,7 +23,7 @@ const getPayment = asyncHandler(async (req, res) => {
 });
 // Create a payment
 const createPayment = asyncHandler(async (req, res) => {
-  const { amount, booking } = req.body;
+  const { booking } = req.body;
 
   const credentials = {
     clientKey: process.env.CONSUMER_KEY,
@@ -38,15 +42,16 @@ const createPayment = asyncHandler(async (req, res) => {
       PartyA: 254729842998,
       PhoneNumber: 254729842998,
       PartyB: 174379,
-      CallBackURL: "https://4cc0-105-160-4-151.ngrok.io/payments/callback",
+      CallBackURL: "https://7173-41-81-41-236.ngrok.io/payments/callback",
       AccountReference: "bus booking",
       passKey: process.env.PASS_KEY,
       TransactionType: "CustomerPayBillOnline",
     });
+    io.emit("querying", response);
     if (response) {
       const payment = await Payment.create({
-        _id: response.Body.stkCallback.MerchantRequestID,
-        amount,
+        _id: response.CheckoutRequestID,
+        amount: 1500,
         booking,
         user: req.user._id,
       });
@@ -57,25 +62,49 @@ const createPayment = asyncHandler(async (req, res) => {
     console.log(error);
   }
 });
+const getAllPayments = asyncHandler(async (req, res) => {
+  const payments = await Payment.find({});
+  res.status(200).json(payments);
+});
 
 const callback = asyncHandler(async (req, res) => {
   const b = req.body.Body.stkCallback["ResultDesc"];
-  if (b === "The service request is processed successfully") {
-    const payment = await Payment.findById(
-      req.body.Body.stkCallback["MerchantRequestID"]
-    );
-    payment.paid = true;
-    payment.save();
-    res.status(200).json(payment);
-  } else if (b === "Request cancelled by user") {
-    const payment = await Payment.findById(
-      req.body.Body.stkCallback["MerchantRequestID"]
-    );
-    payment.cancelled = true;
-    payment.save();
-    res.status(200).json(payment);
+  if (b) {
+    io.emit("queried", req.body.Body.stkCallback["ResultDesc"]);
   }
+
   io.emit("payment", req.body.stkCallback["ResultDesc"]);
+  io.emit("res", req.body.stkCallback);
+  res.json(b);
+});
+const updatePaymentToPaid = asyncHandler(async (req, res) => {
+  const payment = await Payment.findById(req.params.id);
+  if (payment) {
+    payment.paid = true;
+    await payment.save();
+    io.emit("payment", payment);
+    res.status(200).json(payment);
+  } else {
+    throw new Error("payment not found");
+  }
+});
+const updatePaymentToCancelled = asyncHandler(async (req, res) => {
+  const payment = await Payment.findById(req.params.id);
+  if (payment) {
+    payment.cancelled = true;
+    await payment.save();
+    res.status(200).json(payment);
+  } else {
+    throw new Error("Seat not found");
+  }
 });
 
-export { callback, getPayments, getPayment, createPayment };
+export {
+  callback,
+  getPayments,
+  getPayment,
+  createPayment,
+  updatePaymentToCancelled,
+  updatePaymentToPaid,
+  getAllPayments,
+};

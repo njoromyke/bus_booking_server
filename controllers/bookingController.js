@@ -1,11 +1,19 @@
 import Booking from "../models/bookingModel.js";
 import asyncHandler from "express-async-handler";
 
+const getAllBookings = asyncHandler(async (req, res) => {
+  const boookings = await Booking.find({}).populate("bus");
+  res.json(boookings);
+});
 // @desc Get all bookings
 // @route GET /api/bookings
 // @access Private
+
 const getBookings = asyncHandler(async (req, res) => {
-  const bookings = await Booking.find({});
+  const bookings = await Booking.find({})
+    .populate("user")
+    .select("-password")
+    .populate("bus");
   if (bookings) {
     res.status(200).json(bookings);
   } else {
@@ -137,4 +145,5 @@ export {
   getBooking,
   updateBookingTopaid,
   cancelBooking,
+  getAllBookings,
 };
