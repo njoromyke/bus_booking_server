@@ -2,7 +2,7 @@ import BusDepatures from "../models/busDepartures.js";
 import asyncHandler from "express-async-handler";
 
 // get all buses where departure date is req.body.departureDate
-const getBuses = asyncHandler(async (req, res) => {
+const getBusesDeparture = asyncHandler(async (req, res) => {
   const buses = await BusDepatures.find({
     departureDate: req.body.departureDate,
     departureTime: req.body.departureTime,
@@ -58,8 +58,8 @@ const deleteBusDeparture = asyncHandler(async (req, res) => {
 });
 
 export default {
-  getBuses, // get all buses where departure date is req.body.departureDate
   createBusDeparture, //create bus departure
   updateBusDeparture, //update bus departure
   deleteBusDeparture, //delete bus departure
+  getBusesDeparture, //get all buses where departure date is req.body.departureDate
 };
