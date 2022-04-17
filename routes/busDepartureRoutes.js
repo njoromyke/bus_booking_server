@@ -1,11 +1,6 @@
 import express from "express";
-import { protect, admin } from "../middleware/auth.js";
-import {
-  getBusesDeparture,
-  createBusDeparture,
-  updateBusDeparture,
-  deleteBusDeparture,
-} from "../controllers/busDepartureController.js";
+import { protect, admin } from "../middleware/authMiddleware.js";
+import { createBusDeparture, deleteBusDeparture, getBusesDeparture, updateBusDeparture } from "../controllers/busDepartureController.js";
 
 const router = express.Router();
 

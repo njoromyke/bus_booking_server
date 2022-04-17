@@ -57,7 +57,7 @@ const deleteBusDeparture = asyncHandler(async (req, res) => {
   }
 });
 
-export default {
+export  {
   createBusDeparture, //create bus departure
   updateBusDeparture, //update bus departure
   deleteBusDeparture, //delete bus departure

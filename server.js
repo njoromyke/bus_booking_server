@@ -11,6 +11,7 @@ import bookingRoutes from "./routes/bookingRoutes.js";
 import busRoutes from "./routes/busRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import morgan from "morgan";
+import busDepartureRoutes from "./routes/busDepartureRoutes.js";
 
 const app = express();
 app.use(express.json());
@@ -33,6 +34,7 @@ app.use("/users", userRoutes);
 app.use("/bookings", bookingRoutes);
 app.use("/buses", busRoutes);
 app.use("/payments", paymentRoutes);
+app.use("/departures", busDepartureRoutes);
 
 app.get("/", (req, res) => {
   res.send(
