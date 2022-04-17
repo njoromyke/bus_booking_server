@@ -43,7 +43,7 @@ const createPayment = asyncHandler(async (req, res) => {
       PartyA: 254729842998,
       PhoneNumber: 254729842998,
       PartyB: 174379,
-      CallBackURL: "https://9e93-41-81-41-236.ngrok.io/payments/callback",
+      CallBackURL: "https://5996-105-160-126-125.ngrok.io/payments/callback",
       AccountReference: "bus booking",
       passKey: process.env.PASS_KEY,
       TransactionType: "CustomerPayBillOnline",

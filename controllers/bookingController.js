@@ -10,7 +10,9 @@ const getAllBookings = asyncHandler(async (req, res) => {
 // @access Private
 
 const getBookings = asyncHandler(async (req, res) => {
-  const bookings = await Booking.find({})
+  const bookings = await Booking.find({
+    user: req.user._id,
+  })
     .populate("user")
     .select("-password")
     .populate("bus");

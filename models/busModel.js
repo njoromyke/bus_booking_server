@@ -22,7 +22,21 @@ const busSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    departureTime: {
+      type: String,
+      required: true,
+    },
+
+    departureDate: {
+      type: Date,
+      required: true,
+    },
+    origin: {
+      type: String,
+      required: true,
+    },
   },
+
   {
     timestamps: true,
   }
